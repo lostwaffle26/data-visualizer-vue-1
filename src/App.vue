@@ -1,17 +1,16 @@
 <template>
   <div>
-    <h1>Data Visualization</h1>
-    <pagination />
+    <p>Data Visualization</p>
+    <people-list />
   </div>
 </template>
 
 <script>
-import Pagination from './components/Pagination.vue'
-
+import PeopleList from './components/PeopleList.vue'
 export default {
   name: 'App',
   components: {
-    Pagination
+    PeopleList,
   }
 }
 </script>
@@ -23,6 +22,12 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 30px;
 }
+
+p{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 50px;
+}
+
 </style>

@@ -1,39 +1,54 @@
 <template>
-  <div>
-    <h1>Tableau</h1>
-    <div class="search">
-      <input
-        type="text"
-        placeholder="Filter by department or employee"
-        v-model="filter"
-      />
+  <div class="container">
+    <div class="container">
+
+      <div class="search">
+        <label>Filter par nom:</label>
+        <input type="text" placeholder="Filter" v-model="filter" />
+      </div>
+
+      <div class="pagination">
+        <div>
+          page actuelle : <input v-model="currentPage" type="number"/>
+        </div>
+
+        <div>
+          Pages à afficher
+          <select v-model="pageSize" placeholder="nombre de lignes à afficher">
+            <option>5</option>
+            <option>15</option>
+            <option>25</option>
+            <option>50</option>
+          </select>
+          <button @click="prevPage()">Précédant</button>
+          <button @click="nextPage()">Suivant</button>
+        </div>
+        
+      </div>
     </div>
-    <table id="table">
+
+    <table id="table" class="table-fill">
       <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
+        <th>Prénom</th>
+        <th>Nom</th>
         <th>Genre</th>
+        <th>Email</th>
+        <th>Adresse</th>
+        <th>Ville</th>
+        <th>Pays</th>
+        <th>Téléphone</th>
       </tr>
-      <tr v-for="item in list" v-bind:key="item.id">
+      <tr v-for="(item, key) in pagedList" :key="key">
         <td>{{ item.firstname }}</td>
         <td>{{ item.lastname }}</td>
         <td>{{ item.gender }}</td>
+        <td>{{ item.contact.email }}</td>
+        <td>{{ item.contact.address }}</td>
+        <td>{{ item.contact.city }}</td>
+        <td>{{ item.contact.country }}</td>
+        <td>{{ item.contact.phone }}</td>
       </tr>
     </table>
-
-    <div class="pagination-container">
-      <nav>
-        <ul class="pagination">
-          <li data-page="prev">
-            <span><span class="sr-only">(current)</span></span>
-          </li>
-          <!--	Here the JS Function Will Add the Rows -->
-          <li data-page="next" id="prev">
-            <span><span class="sr-only">(current)</span></span>
-          </li>
-        </ul>
-      </nav>
-    </div>
   </div>
 </template>
 
@@ -46,29 +61,15 @@ const app = createApp();
 
 app.use(VueAxios, axios);
 
-
-
 export default {
   name: "PeopleList",
   data() {
     return {
-      list: undefined,
-      current: 1,
-      total: 10,
-      //   filter: "",
-      //   list: this.list.filter((row) => {
-      //     const firstname = row.firstname.toLowerCase();
-      //     const lastname = row.lastname.toLowerCase();
-      //     const searchTerm = this.filter.toLowerCase();
-
-      //     return firstname.includes(searchTerm) || lastname.includes(searchTerm);
-      //   }),
+      list: [],
+      currentPage: "1",
+      pageSize: "5",
+      filter: "",
     };
-  },
-  methods: {
-    onPageChange(page) {
-      this.current = page;
-    },
   },
   mounted() {
     app.axios
@@ -78,10 +79,78 @@ export default {
         console.warn(resp.data.people);
       });
   },
+  methods: {
+    nextPage() {
+      if (this.currentPage * this.pageSize < this.list.length)
+        this.currentPage++;
+    },
+
+    prevPage() {
+      if (this.currentPage > 1) this.currentPage--;
+    },
+  },
+  computed: {
+    pagedList() {
+      return this.filteredRows.filter((row, index) => {
+        let first = (this.currentPage - 1) * this.pageSize;
+        let last = this.currentPage * this.pageSize;
+        if (index >= first && index < last) return true;
+      });
+    },
+    filteredRows() {
+      return this.list.filter((row) => {
+        const firstname = row.firstname.toLowerCase();
+        const lastname = row.lastname.toLowerCase();
+        const searchTerm = this.filter.toLowerCase();
+        return firstname.includes(searchTerm) || lastname.includes(searchTerm);
+      });
+    },
+  },
 };
 </script>
 
-<style lang="css" scoped>
+<style lang="css">
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  
+}
+
+
+.pagination{
+  display: flex;
+  padding: 10px;
+}
+
+input{
+  padding: 10px;
+}
+
+select{
+  padding: 10px;
+}
+
+button{
+   background-color: #007acc; /* Green */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border: 1px solid white;
+
+}
+
+.search{
+  display: flex;
+  padding: 10px;
+}
 #table {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
@@ -109,12 +178,4 @@ export default {
   background-color: #007acc;
   color: white;
 }
-
-.pagination li:hover{
-    cursor: pointer;
-}
-		table tbody tr {
-			display: none;
-		}
-
 </style>
