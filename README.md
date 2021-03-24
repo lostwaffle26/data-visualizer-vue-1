@@ -1,23 +1,13 @@
 <h1>data-visualizer</h1>
 
-## Project setup
+## Configuration du projet
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiler le projet
 ```
 npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
 ```
 
 # Utilisitation du site :
